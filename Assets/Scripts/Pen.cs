@@ -1,4 +1,4 @@
-using System.Collections;
+
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -51,13 +51,40 @@ public class Pen : MonoBehaviour
         }
     }
 
-    private static void Draw()
+    private void Draw()
     {
-        
+        if(currentDrawing == null)
+        {
+            index = 0;
+            currentDrawing = new GameObject().AddComponent<LineRenderer>();
+            currentDrawing.material = drawingMaterial;
+            currentDrawing.startColor = currentDrawing.endColor = penColors[currentColorIndex];
+            currentDrawing.startWidth = currentDrawing.endWidth = 0;
+            currentDrawing.positionCount = 1;
+            currentDrawing.SetPosition(0, tip.transform.position);
+        }
+        else
+        {
+            var currentPosition = currentDrawing.GetPosition(index);
+            if(Vector3.Distance(currentPosition, tip.transform.position)> 0.01f)
+            {
+                index++;
+                currentDrawing.positionCount = index + 1;
+                currentDrawing.SetPosition(index, transform.position);
+            }
+        }
     }
 
-    private static void SwitchColor()
+    private void SwitchColor()
     {
-        
+        if(currentColorIndex == penColors.Length - 1)
+        {
+            currentColorIndex = 0;
+        }
+        else
+        {
+            currentColorIndex++;
+        }
+        tipMaterial.color = penColors[currentColorIndex];
     }
 }
